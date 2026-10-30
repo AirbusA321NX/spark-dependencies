@@ -182,7 +182,7 @@ STORAGE=elasticsearch ES_NODES=http://localhost:9200 \
 ```
 
 **Effect:**
-* **Reduces the number of scroll slices**: Setting `es.input.max.docs.per.partition` increases the target maximum number of documents per input partition, which typically reduces the total number of generated scroll slices, helping stay under the 1024 limit. However, because this property is an advisory guideline rather than a hard guarantee, staying under the limit is not guaranteed, and extremely large indices may require tuning this value higher.
+* **Effect depends on the existing configuration**: Increasing an existing finite `es.input.max.docs.per.partition` value typically reduces the number of scroll slices, but does not guarantee staying under the 1024 limit. Connector 8.13.4, used by the Elasticsearch 8 image above, defaults to unsliced, per-shard input when this property is unset; setting a finite value enables slicing and can itself cause the slice-limit error on large shards. Leave the property unset to avoid sliced input on that connector, or use the examples above only when sliced input is required and tune the value for your shard sizes.
 * **Spark configuration pass-through**: The `spark.` prefix is required when passing JVM options (`-Dspark.es...`) so Apache Spark propagates the setting to the underlying `elasticsearch-spark` connector.
 
 
